@@ -1,14 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { Provider } from "react-redux";
+import HomeScreen from "./screens/HomeScreen";
+import LoginScreen from "./screens/LoginScreen";
 import { store } from "./store";
 
 export default function App() {
   return (
     <Provider store={store}>
-      <View style={styles.container}>
-        <Text>This is the beginning of Snapmap but FIU</Text>
-      </View>
+      <LoginScreen />
     </Provider>
   );
 }
