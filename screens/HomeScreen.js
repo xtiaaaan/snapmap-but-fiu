@@ -1,12 +1,34 @@
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
-import colors from "../constants/colors.js";
+import colors from "../constants/colors";
+import FIUVert from "../assets/icons/FIU_vrt.png";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <Text style={styles.header}>This is the HOME SCREEN</Text>
-      <Text style={styles.header}>PANTHER SNAP</Text>
+      <Text style={styles.text}>This is the login screen</Text>
+      <Image
+        style={{ alignSelf: "center", marginBottom: "100%" }}
+        source={FIUVert}
+      />
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Login")}
+        style={styles.loginButton}
+      >
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Signup")}
+        style={styles.signUpButton}
+      >
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -18,7 +40,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.fiuBlue,
   },
-  header: {
+  text: {
+    alignSelf: "center",
     color: colors.lightGrey,
+  },
+  buttonText: {
+    color: colors.lightGrey,
+    fontSize: 26,
+  },
+  loginButton: {
+    alignItems: "center",
+    paddingVertical: "10%",
+    backgroundColor: colors.fiuGold,
+  },
+  signUpButton: {
+    alignItems: "center",
+    paddingVertical: "10%",
+    backgroundColor: colors.darkGrey,
   },
 });
