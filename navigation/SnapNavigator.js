@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const LoginScreen = () => {
+const SnapNavigator = () => {
   return (
     <View>
-      <Text>LoginScreen</Text>
+      <Text>SnapNavigator</Text>
     </View>
   );
 };
 
-export default LoginScreen;
+export default SnapNavigator;
 
 const styles = StyleSheet.create({});

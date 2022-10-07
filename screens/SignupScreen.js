@@ -1,14 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React from "react";
 
-const SignupScreen = () => {
+const SignupScreen = ({ navigation }) => {
   return (
-    <View>
+    <SafeAreaView>
       <Text>SignupScreen</Text>
-    </View>
-  )
-}
+    </SafeAreaView>
+  );
+};
 
-export default SignupScreen
+export default SignupScreen;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});
