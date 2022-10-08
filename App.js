@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import HomeScreen from "./screens/HomeScreen";
 import SignupScreen from "./screens/SignupScreen";
+import LoginScreen from "./screens/LoginScreen";
 import { store } from "./store";
 
 export default function App() {
@@ -23,6 +24,11 @@ export default function App() {
             <Stack.Screen
               name="Signup"
               component={SignupScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
