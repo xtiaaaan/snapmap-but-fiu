@@ -9,6 +9,7 @@ import SignupScreen from "./screens/SignupScreen";
 import LoginScreen from "./screens/LoginScreen";
 import { store } from "./store";
 
+
 export default function App() {
   const Stack = createStackNavigator();
   return (
