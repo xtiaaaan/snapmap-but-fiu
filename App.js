@@ -7,6 +7,8 @@ import { Provider } from "react-redux";
 import HomeScreen from "./screens/HomeScreen";
 import SignupScreen from "./screens/SignupScreen";
 import LoginScreen from "./screens/LoginScreen";
+import MainScreen from "./screens/MainScreen";
+import CameraScreen from "./screens/CameraScreen";
 import { store } from "./store";
 
 export default function App() {
@@ -29,6 +31,16 @@ export default function App() {
             <Stack.Screen
               name="Login"
               component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MainMenu"
+              component={MainScreen}
+              options={{ headerShown: false }}
+            />
+            <StackScreen
+              name="Camera"
+              component={CameraScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
