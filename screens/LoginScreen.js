@@ -1,63 +1,31 @@
 import {
   StyleSheet,
   Text,
-  Touchable,
   TouchableOpacity,
   TextInput,
   View,
 } from "react-native";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import colors from "../constants/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../firebase";
+import { getAuth } from "firebase/auth";
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-  return (
-    
-      <SafeAreaView style={styles.safeAreaView}>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-           placeholder="Username"
-          placeholderTextColor="#003f5c"
-          onChangeText={(username) => setUsername(username)}
-          />
-        </View>
- 
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Password"
-            placeholderTextColor="#003f5c"
-            secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)}
-          />
-        </View>
+  const handleSignIn = () => {};
 
-        <TouchableOpacity>
-          <Text style={styles.forgot_button}>Forgot Password?</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.loginBtn}>
-           <Text style={styles.loginText}>LOGIN</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.goBackBtn} onPress={() => navigation.navigate("Home")}>
-          <Text>Go back</Text>
-        </TouchableOpacity>
-
-        
-      </SafeAreaView>
-    
-  );
+  return <SafeAreaView style={styles.safeAreaView}></SafeAreaView>;
 };
 
 export default LoginScreen;
 
 const styles = StyleSheet.create({
-
   safeAreaView: {
     flex: 1,
     backgroundColor: colors.fiuBlue,
@@ -73,12 +41,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: "center",
   },
-  
+
   TextInput: {
     height: 50,
     flex: 1,
     padding: 10,
-    marginLeft: 20,
+    alignItems: "center",
   },
 
   forgot_button: {
@@ -88,26 +56,26 @@ const styles = StyleSheet.create({
   },
 
   loginBtn: {
-    width: "80%",
-    borderRadius: 25,
-    height: 50,
+    position: "absolute",
+    bottom: "15%",
+    width: "100%",
+    height: "15%",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-   backgroundColor:colors.fiuGold,
- },
+    backgroundColor: colors.fiuGold,
+  },
 
- goBackBtn: {
-    width: "50%",
-    borderRadius: 25,
-    height: 50,
+  goBackBtn: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    height: "15%",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-   backgroundColor:"#e9967a",
- }
-
-
-
-
+    backgroundColor: colors.darkGrey,
+  },
+  buttonText: {
+    color: colors.lightGrey,
+    fontSize: 26,
+  },
 });

@@ -38,7 +38,7 @@ export default function App() {
               component={MainScreen}
               options={{ headerShown: false }}
             />
-            <StackScreen
+            <Stack.Screen
               name="Camera"
               component={CameraScreen}
               options={{ headerShown: false }}

@@ -13,10 +13,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <Text style={styles.text}>This is the login screen</Text>
-      <Image
-        style={{ alignSelf: "center", marginBottom: "100%" }}
-        source={FIUVert}
-      />
+      <Image style={{ alignSelf: "center" }} source={FIUVert} />
       <TouchableOpacity
         onPress={() => navigation.navigate("Login")}
         style={styles.loginButton}
@@ -49,13 +46,21 @@ const styles = StyleSheet.create({
     fontSize: 26,
   },
   loginButton: {
+    position: "absolute",
+    bottom: "15%",
+    width: "100%",
+    height: "15%",
     alignItems: "center",
-    paddingVertical: "10%",
+    justifyContent: "center",
     backgroundColor: colors.fiuGold,
   },
   signUpButton: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    height: "15%",
     alignItems: "center",
-    paddingVertical: "10%",
+    justifyContent: "center",
     backgroundColor: colors.darkGrey,
   },
 });
