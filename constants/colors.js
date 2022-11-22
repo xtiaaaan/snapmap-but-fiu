@@ -9,4 +9,5 @@ export default {
   mediumGrey: "#E6E6E6",
   lightGrey: "#F4f4f4",
   black: "#000000",
+  lightBlue: "#F0f8FF",
 };

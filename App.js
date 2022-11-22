@@ -10,6 +10,8 @@ import LoginScreen from "./screens/LoginScreen";
 import MainScreen from "./screens/MainScreen";
 import CameraScreen from "./screens/CameraScreen";
 import { store } from "./store";
+import ForgotPassScreen from "./screens/ForgotPassScreen";
+import DebugScreen from "./screens/DebugScreen";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -41,6 +43,16 @@ export default function App() {
             <Stack.Screen
               name="Camera"
               component={CameraScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPassScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Debug"
+              component={DebugScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
