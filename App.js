@@ -11,7 +11,6 @@ import MainScreen from "./screens/MainScreen";
 import CameraScreen from "./screens/CameraScreen";
 import { store } from "./store";
 import ForgotPassScreen from "./screens/ForgotPassScreen";
-import DebugScreen from "./screens/DebugScreen";
 import { useEffect, useState } from "react";
 import { firebase } from "./firebase.js";
 
@@ -66,11 +65,6 @@ export default function App() {
             <Stack.Screen
               name="ForgotPassword"
               component={ForgotPassScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Debug"
-              component={DebugScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

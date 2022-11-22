@@ -9,9 +9,22 @@ import {
 import React, { useState } from "react";
 import colors from "../constants/colors";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { firebase } from "../firebase.js";
 
 const ForgotPassScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
+
+  const changePassword = (email) => {
+    firebase
+      .auth()
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        alert("Password Reset Email Sent!");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -50,12 +63,17 @@ const ForgotPassScreen = ({ navigation }) => {
         <View style={styles.inputView}>
           <TextInput
             placeholder="roary022@fiu.edu"
+            autoCapitalize="none"
+            autoCorrect={false}
             style={styles.textInput}
-            onChange={(email) => setEmail(email)}
+            onChangeText={(email) => setEmail(email)}
           />
         </View>
       </View>
-      <TouchableOpacity style={styles.sendButton}>
+      <TouchableOpacity
+        onPress={() => changePassword(email)}
+        style={styles.sendButton}
+      >
         <Text style={{ color: colors.white, fontSize: 18 }}>
           Send Instructions
         </Text>

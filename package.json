@@ -14,7 +14,7 @@
     "@rneui/themed": "^4.0.0-rc.7",
     "expo": "~46.0.9",
     "expo-camera": "~12.3.0",
-    "expo-media-library": "^15.0.0",
+    "expo-media-library": "~14.2.0",
     "expo-sharing": "^11.0.1",
     "expo-splash-screen": "~0.16.2",
     "expo-status-bar": "~1.4.0",

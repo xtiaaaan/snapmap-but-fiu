@@ -8,7 +8,7 @@ import {
   View,
   ImageBackground,
 } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Camera } from "expo-camera";
 import colors from "../constants/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -17,24 +17,32 @@ import Entypo from "react-native-vector-icons/Entypo";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { firebase } from "../firebase.js";
-import * as Medialibrary from "expo-media-library";
+import * as MediaLibrary from "expo-media-library";
 import { shareAsync } from "expo-sharing";
 
 const CameraScreen = ({ navigation }) => {
   let camera = Camera;
   let cameraRef = useRef();
   const [startCamera, setStartCamera] = useState(false);
+  const [hasCamPermission, setHasCamPermission] = useState();
+  const [hasMediaLibPermission, setHasMediaLibPermission] = useState();
   const [previewVisible, setPreviewVisible] = useState(false);
   const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [capturedImage, setCapturedImage] = useState([]);
-  const [photo, setPhoto] = useState();
+
+  useEffect(() => {
+    (async () => {
+      const cameraPermission = await Camera.requestCameraPermissionsAsync();
+      const mediaLibraryPermission =
+        await MediaLibrary.requestPermissionsAsync();
+      setHasCamPermission(cameraPermission.status);
+      setHasMediaLibPermission(mediaLibraryPermission.status);
+    })();
+  }, []);
 
   const startCam = async () => {
-    const { status } = await Camera.requestCameraPermissionsAsync();
-    const mediaLibraryPermission = await Medialibrary.requestPermissionsAsync();
-    console.log(status);
-    if (status == "granted") {
+    if (hasCamPermission === "granted" && hasMediaLibPermission === "granted") {
       setStartCamera(true);
     } else {
       Alert.alert("Permission denied");
@@ -57,29 +65,12 @@ const CameraScreen = ({ navigation }) => {
     }
   };
 
-  const savePhoto = () => {
-    if (photo) {
-      Medialibrary.saveToLibraryAsync(photo.uri).then(() => {
-        setPhoto(undefined).then(() => {
-          console.log("Saved successfully");
-        });
-      });
-    }
-  };
-
   const takePicture = async () => {
     if (!camera) return;
-    let options = {
-      quality: 1,
-      base64: true,
-      exif: false,
-    };
 
-    let newPhoto = await camera.takePictureAsync(options);
-    console.log(newPhoto);
+    let newPhoto = await camera.takePictureAsync();
     setPreviewVisible(true);
     setCapturedImage(newPhoto);
-    setPhoto(newPhoto);
   };
 
   const recordVideo = async () => {
@@ -91,6 +82,10 @@ const CameraScreen = ({ navigation }) => {
     setCapturedImage(null);
     setPreviewVisible(false);
     startCam();
+  };
+
+  const savePhoto = () => {
+    MediaLibrary.saveToLibraryAsync(capturedImage.uri);
   };
 
   return (
@@ -113,15 +108,15 @@ const CameraScreen = ({ navigation }) => {
               }}
             >
               <SafeAreaView style={styles.optionsView}>
-                <View style={{ flexDirection: "column" }}>
+                <View style={{ flexDirection: "row" }}>
                   <View>
                     <TouchableOpacity
                       onPress={() => navigation.goBack()}
-                      style={styles.optionsButton}
+                      style={styles.backButton}
                     >
                       <AntDesign
                         name={"arrowleft"}
-                        size={35}
+                        size={40}
                         color={colors.white}
                       />
                     </TouchableOpacity>
@@ -129,23 +124,11 @@ const CameraScreen = ({ navigation }) => {
                   <View>
                     <TouchableOpacity
                       onPress={handleFlashMode}
-                      style={styles.optionsButton}
+                      style={styles.flasButton}
                     >
                       <Ionicons
                         name={flashMode == "on" ? "flash" : "flash-off"}
-                        size={35}
-                        color={colors.white}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <View>
-                    <TouchableOpacity
-                      onPress={switchCamera}
-                      style={styles.optionsButton}
-                    >
-                      <Ionicons
-                        name={"camera-reverse"}
-                        size={35}
+                        size={40}
                         color={colors.white}
                       />
                     </TouchableOpacity>
@@ -154,6 +137,15 @@ const CameraScreen = ({ navigation }) => {
                 <View style={styles.shutterView}>
                   <View>
                     <Entypo name={"circle"} size={80} color={colors.white} />
+                  </View>
+                  <View style={styles.flipcameraButton}>
+                    <TouchableOpacity onPress={switchCamera}>
+                      <Ionicons
+                        name={"camera-reverse"}
+                        size={50}
+                        color={colors.white}
+                      />
+                    </TouchableOpacity>
                   </View>
                   <TouchableOpacity
                     onPress={takePicture}
@@ -196,9 +188,12 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     flexDirection: "row",
   },
-  optionsButton: {
+  backButton: {
     paddingLeft: "10%",
     paddingBottom: "10%",
+  },
+  flasButton: {
+    marginLeft: "52.5%",
   },
   shutterView: {
     position: "absolute",
@@ -217,10 +212,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   flipcameraButton: {
-    marginTop: 20,
-    borderRadius: "50%",
-    height: 25,
-    width: 25,
+    position: "absolute",
+    left: "17.5%",
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+    marginTop: "7.5%",
   },
   startcamButton: {
     width: "80%",
@@ -231,10 +228,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  saveText: {
+    fontSize: 16,
+    color: colors.white,
+  },
+  saveButton: {
+    alignItems: "center",
+    marginLeft: 12.5,
+    width: "100%",
+    bottom: 10,
+  },
 });
 
 const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
-  console.log("nice shit", photo);
   return (
     <View
       style={{
@@ -246,25 +252,22 @@ const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
     >
       <ImageBackground source={{ uri: photo && photo.uri }} style={{ flex: 1 }}>
         <SafeAreaView style={styles.optionsView}>
-          <View style={{ flexDirection: "column" }}>
+          <View style={{ flexDirection: "row" }}>
             <View>
               <TouchableOpacity
-                onPress={retakePicture}
-                style={styles.optionsButton}
+                onPress={() => retakePicture()}
+                style={styles.backButton}
               >
-                <Entypo name={"cross"} size={35} color={colors.white} />
+                <AntDesign name={"close"} size={40} color={colors.white} />
               </TouchableOpacity>
             </View>
-            <View>
+            <View style={{ flexDirection: "row" }}>
               <TouchableOpacity
-                onPress={() => savePhoto}
-                style={styles.optionsButton}
+                onPress={() => savePhoto()}
+                style={styles.saveButton}
               >
-                <MaterialIcons
-                  name={"add-to-photos"}
-                  size={35}
-                  color={colors.white}
-                />
+                <AntDesign name={"download"} size={40} color={colors.white} />
+                <Text style={styles.saveText}>Save</Text>
               </TouchableOpacity>
             </View>
           </View>
