@@ -24,7 +24,7 @@ const ForgotPassScreen = ({ navigation }) => {
           style={{
             paddingHorizontal: "2.5%",
           }}
-          onPress={() => navigation.navigate("Home")}
+          onPress={() => navigation.goBack()}
         >
           <AntDesign name={"arrowleft"} size={20} color={colors.fiuBlue} />
         </TouchableOpacity>

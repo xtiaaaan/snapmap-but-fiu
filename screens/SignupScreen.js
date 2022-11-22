@@ -6,16 +6,74 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import colors from "../constants/colors";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FIUPanther from "../assets/icons/FIU_panther.png";
-import { Input } from "@rneui/themed";
+import { Input, registerCustomIconType } from "@rneui/themed";
+import { firebase } from "../firebase";
 
 const SignupScreen = ({ navigation }) => {
-  const [fullname, setFullname] = useState("");
-  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
+
+  const registerUser = async (email, password, fullName) => {
+    if (password != verifyPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        firebase
+          .auth()
+          .currentUser.sendEmailVerification({
+            handleCodeInApp: true,
+            url: "https://snapmap-but-fiu.firebaseapp.com",
+          })
+          .then(() => {
+            alert("Verification email sent");
+          })
+          .catch((error) => {
+            alert(error.message);
+          })
+          .then(() => {
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(firebase.auth().currentUser.id)
+              .set({
+                fullName,
+                email,
+              });
+          })
+          .catch((error) => {
+            alert(error.message);
+          })
+          .then(() => {
+            setFullName("");
+            setEmail("");
+            setPassword("");
+            setVerifyPassword("");
+          })
+          .catch((error) => {
+            alert(error.message);
+          })
+          .then(() => {
+            navigation.navigate("Login");
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -34,7 +92,7 @@ const SignupScreen = ({ navigation }) => {
             paddingLeft: "2.5%",
             paddingRight: "2.5%",
           }}
-          onPress={() => navigation.navigate("Home")}
+          onPress={() => navigation.goBack()}
         >
           <AntDesign name={"arrowleft"} size={20} color={colors.fiuBlue} />
         </TouchableOpacity>
@@ -47,27 +105,42 @@ const SignupScreen = ({ navigation }) => {
       </View>
       <View style={styles.signupBox}>
         <Input
+          onChangeText={(fullName) => setFullName(fullName)}
           placeholder="Full Name"
           leftIcon={{ type: "font-awesome", name: "user", color: "grey" }}
         />
         <Input
+          onChangeText={(email) => setEmail(email)}
           placeholder="Email Address"
+          autoCapitalize="none"
+          autoCorrect={false}
           leftIcon={{ type: "font-awesome", name: "at", color: "grey" }}
         />
         <Input
+          onChangeText={(password) => setPassword(password)}
           placeholder="Password"
+          autoCapitalize="none"
+          autoCorrect={false}
           leftIcon={{ type: "font-awesome", name: "lock", color: "grey" }}
+          secureTextEntry={true}
         />
         <Input
+          onChangeText={(verifyPassword) => setVerifyPassword(verifyPassword)}
           placeholder="Confirm Password"
+          autoCapitalize="none"
+          autoCorrect={false}
           leftIcon={{
             type: "font-awesome",
             name: "lock",
             color: "grey",
           }}
+          secureTextEntry={true}
         />
       </View>
-      <TouchableOpacity style={styles.signupButton}>
+      <TouchableOpacity
+        onPress={() => registerUser(email, password, fullName)}
+        style={styles.signupButton}
+      >
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
       <View style={{ flexDirection: "row" }}>

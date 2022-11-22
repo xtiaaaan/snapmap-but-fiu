@@ -12,9 +12,27 @@ import CameraScreen from "./screens/CameraScreen";
 import { store } from "./store";
 import ForgotPassScreen from "./screens/ForgotPassScreen";
 import DebugScreen from "./screens/DebugScreen";
+import { useEffect, useState } from "react";
+import { firebase } from "./firebase.js";
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  const Stack = createStackNavigator();
+  const [initilizing, setInitilizing] = useState(true);
+  const [user, setUser] = useState();
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initilizing) setInitilizing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
+
+  if (initilizing) return null;
+
   return (
     <Provider store={store}>
       <NavigationContainer>

@@ -8,7 +8,7 @@ import {
   View,
   ImageBackground,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Camera } from "expo-camera";
 import colors from "../constants/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -16,17 +16,23 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { firebase } from "../firebase.js";
+import * as Medialibrary from "expo-media-library";
+import { shareAsync } from "expo-sharing";
 
 const CameraScreen = ({ navigation }) => {
   let camera = Camera;
+  let cameraRef = useRef();
   const [startCamera, setStartCamera] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [capturedImage, setCapturedImage] = useState([]);
+  const [photo, setPhoto] = useState();
 
   const startCam = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
+    const mediaLibraryPermission = await Medialibrary.requestPermissionsAsync();
     console.log(status);
     if (status == "granted") {
       setStartCamera(true);
@@ -51,12 +57,29 @@ const CameraScreen = ({ navigation }) => {
     }
   };
 
+  const savePhoto = () => {
+    if (photo) {
+      Medialibrary.saveToLibraryAsync(photo.uri).then(() => {
+        setPhoto(undefined).then(() => {
+          console.log("Saved successfully");
+        });
+      });
+    }
+  };
+
   const takePicture = async () => {
     if (!camera) return;
-    const photo = await camera.takePictureAsync();
-    console.log(photo);
+    let options = {
+      quality: 1,
+      base64: true,
+      exif: false,
+    };
+
+    let newPhoto = await camera.takePictureAsync(options);
+    console.log(newPhoto);
     setPreviewVisible(true);
-    setCapturedImage(photo);
+    setCapturedImage(newPhoto);
+    setPhoto(newPhoto);
   };
 
   const recordVideo = async () => {
@@ -64,7 +87,6 @@ const CameraScreen = ({ navigation }) => {
     const video = await Camera.recordAsync();
   };
 
-  const savePhoto = () => {};
   const retakePicture = () => {
     setCapturedImage(null);
     setPreviewVisible(false);
@@ -94,7 +116,7 @@ const CameraScreen = ({ navigation }) => {
                 <View style={{ flexDirection: "column" }}>
                   <View>
                     <TouchableOpacity
-                      onPress={() => navigation.navigate("Debug")}
+                      onPress={() => navigation.goBack()}
                       style={styles.optionsButton}
                     >
                       <AntDesign
@@ -122,9 +144,7 @@ const CameraScreen = ({ navigation }) => {
                       style={styles.optionsButton}
                     >
                       <Ionicons
-                        name={
-                          cameraType == "front" ? "camera-reverse" : "camera"
-                        }
+                        name={"camera-reverse"}
                         size={35}
                         color={colors.white}
                       />
@@ -152,7 +172,7 @@ const CameraScreen = ({ navigation }) => {
         </View>
       ) : (
         <SafeAreaView>
-          <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="camera" size={20} color={colors.fiuBlue} />
           </TouchableOpacity>
         </SafeAreaView>
@@ -237,7 +257,7 @@ const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
             </View>
             <View>
               <TouchableOpacity
-                onPress={savePhoto}
+                onPress={() => savePhoto}
                 style={styles.optionsButton}
               >
                 <MaterialIcons

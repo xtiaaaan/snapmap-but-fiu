@@ -9,21 +9,26 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import colors from "../constants/colors";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "../firebase";
-import { getAuth } from "firebase/auth";
+import { firebase } from "../firebase.js";
 import FIUPanther from "../assets/icons/FIU_panther.png";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FIUBackground from "../assets/icons/FIU_background.png";
 import PanthMap from "../assets/icons/FIU_panthmap.png";
+import { addListener } from "@reduxjs/toolkit";
 
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
 
-  const handleSignIn = () => {};
+  const loginUser = async (email, password) => {
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+    } catch (error) {
+      alert(error.message);
+    }
+
+    navigation.navigate("MainMenu");
+  };
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -54,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
               paddingLeft: "2.5%",
               paddingRight: "2.5%",
             }}
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.goBack()}
           >
             <AntDesign name={"arrowleft"} size={20} color={colors.fiuBlue} />
           </TouchableOpacity>
@@ -70,18 +75,25 @@ const LoginScreen = ({ navigation }) => {
             <TextInput
               style={styles.textInput}
               placeholder="FIU Email"
-              onChange={(username) => setUsername(username)}
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={(email) => setEmail(email)}
             />
           </View>
           <View style={styles.inputView}>
             <TextInput
               style={styles.textInput}
               placeholder="Password"
+              autoCapitalize="none"
+              autoCorrect={false}
               secureTextEntry={true}
-              onChange={(password) => setPassword(password)}
+              onChangeText={(password) => setPassword(password)}
             />
           </View>
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity
+            onPress={() => loginUser(email, password)}
+            style={styles.loginButton}
+          >
             <Text style={styles.buttonText}>Log In</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -144,7 +156,8 @@ const styles = StyleSheet.create({
     color: colors.fiuBlue,
     alignSelf: "center",
     paddingLeft: "5%",
-    paddingRight: "50%",
+    paddingRight: "45%",
+    fontWeight: "bold",
   },
   textInput: {
     fontSize: 18,

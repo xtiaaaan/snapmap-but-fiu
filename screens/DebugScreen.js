@@ -11,6 +11,9 @@ const DebugScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <Text>DebugScreen</Text>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text>Go Back</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
         <Text>Camera Screen</Text>
       </TouchableOpacity>
