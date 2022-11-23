@@ -50,12 +50,6 @@ const HomeScreen = ({ navigation }) => {
           Forgot Password?
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={{ bottom: "30%" }}
-        onPress={() => navigation.navigate("Debug")}
-      >
-        <Text>Debug</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
